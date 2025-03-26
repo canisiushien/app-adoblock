@@ -1,0 +1,27 @@
+{"properties": [
+  {
+    "name": "ethereum.sepolia.web3j.api-key",
+    "type": "java.lang.String",
+    "description": "Une description pour 'ethereum.sepolia.web3j.api-key'"
+  },
+  {
+    "name": "ethereum.ganache.rpc-server-url",
+    "type": "java.lang.String",
+    "description": "Une description pour 'ethereum.ganache.rpc-server-url'"
+  },
+  {
+    "name": "ethereum.ganache.private-key",
+    "type": "java.lang.String",
+    "description": "Une description pour 'ethereum.ganache.private-key'"
+  },
+  {
+    "name": "ethereum.ganache.account.address",
+    "type": "java.lang.String",
+    "description": "Une description pour 'ethereum.ganache.account.address'"
+  },
+  {
+    "name": "management.endpoints.web.exposure.include",
+    "type": "java.lang.String",
+    "description": "Une description pour 'management.endpoints.web.exposure.include'"
+  }
+]}  
