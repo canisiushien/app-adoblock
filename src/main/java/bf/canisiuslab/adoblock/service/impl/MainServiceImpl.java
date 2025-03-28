@@ -204,9 +204,12 @@ public class MainServiceImpl implements MainService {
 
         DocumentAdmin check = documentAdminRepository
                 .findByHashEncodeBase64(newHashEncoded).orElse(null);
-        String storedHashEncoded = check.getHashEncodeBase64();
-        String storedSignedHashEncoded = check.getSignatureEncodeBase64();
-        String storedPublicKeyEncoded = check.getPublicKeyEncodeBase64();
+        String storedHashEncoded = (check != null ? check.getHashEncodeBase64() : null);
+        String storedSignedHashEncoded = (check != null ? check.getSignatureEncodeBase64() : null);
+        String storedPublicKeyEncoded = (check != null ? check.getPublicKeyEncodeBase64() : null);
+
+        response.setDocHashed(newHashEncoded);
+        response.setPublicKey(storedPublicKeyEncoded);
 
         // Convertir les données récupérées de Base64 en bytes
         byte[] storedHash = HashUtil.decodeBase64ToByteArray(storedHashEncoded);
@@ -408,11 +411,26 @@ public class MainServiceImpl implements MainService {
     // */
     // @Override
     // public ResponseAddDTO addDocumentToBlockchain(MultipartFile digitalDocument,
+    // MultipartFile trustedKeys,
     // String privateKeyEncoded,
     // String publicKeyEncoded)
     // throws InvalidKeyException, Exception {
     // log.info("Enregistrement du document {} dans la blockchain",
     // digitalDocument.getOriginalFilename());
+    //
+    // // controle et validation de paramaetres
+    // if (trustedKeys == null && (privateKeyEncoded.strip() == null ||
+    // publicKeyEncoded.strip() == null)) {
+    // throw new CustomException("Veuillez, soit renseigner les 2 clés soit charger
+    // le fichier .crt de clés SVP.");
+    // }
+    // // recuperation des clés du fichier
+    // if (trustedKeys != null) {
+    // KeysPairDTO extractedKeys;
+    // extractedKeys = this.certificateReader(trustedKeys);
+    // privateKeyEncoded = extractedKeys.getPrivateKey();
+    // publicKeyEncoded = extractedKeys.getPublicKey();
+    // }
     // /**
     // * pour le hash du contenu qui sera calculé et pour la signature numérique (le
     // * hash qui sera signé/chiffré via la clé privée) du document

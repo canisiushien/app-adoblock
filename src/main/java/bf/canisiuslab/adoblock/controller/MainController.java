@@ -79,7 +79,8 @@ public class MainController {
      * @throws InvalidKeyException
      */
     @PostMapping(value = "/verify-from-blockchain", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> authenticateDocumentFromEthereum(@RequestParam("file") MultipartFile file)
+    public ResponseEntity<?> authenticateDocumentFromEthereum(
+            @RequestParam(name = "file", required = true) MultipartFile file)
             throws IOException, InvalidKeyException {
 
         return ResponseEntity.status(HttpStatus.OK)
