@@ -59,12 +59,15 @@ public class MainController {
      * @throws InvalidKeyException
      */
     @PostMapping(value = "/add-to-blockchain", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> saveDocumentToEthereum(@RequestParam("file") MultipartFile documentAdministratif,
-            @RequestParam("privateKey") String privateKey, @RequestParam("publicKey") String publicKey)
+    public ResponseEntity<?> saveDocumentToEthereum(
+            @RequestParam(name = "file", required = true) MultipartFile documentAdministratif,
+            @RequestParam(name = "fileKey", required = false) MultipartFile trustedKeys,
+            @RequestParam(name = "privateKey", required = false) String privateKey,
+            @RequestParam(name = "publicKey", required = false) String publicKey)
             throws InvalidKeyException, Exception {
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(service.addDocumentToBlockchain(documentAdministratif, privateKey, publicKey));
+                .body(service.addDocumentToBlockchain(documentAdministratif, trustedKeys, privateKey, publicKey));
     }
 
     /**

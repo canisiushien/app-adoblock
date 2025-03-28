@@ -16,6 +16,8 @@ import java.util.Base64;
 import java.util.Date;
 import java.security.spec.ECGenParameterSpec;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.time.Instant;
 
 import bf.canisiuslab.adoblock.service.EthereumService;
@@ -90,10 +92,24 @@ public class MainServiceImpl implements MainService {
      * @throws InvalidKeyException en cas d'erreur d'exécution
      */
     @Override
-    public ResponseAddDTO addDocumentToBlockchain(MultipartFile digitalDocument, String privateKeyEncoded,
+    public ResponseAddDTO addDocumentToBlockchain(MultipartFile digitalDocument, MultipartFile trustedKeys,
+            String privateKeyEncoded,
             String publicKeyEncoded)
             throws InvalidKeyException, Exception {
         log.info("Enregistrement du document {} dans la blockchain", digitalDocument.getOriginalFilename());
+
+        // controle et validation de paramaetres
+        if (trustedKeys == null && (privateKeyEncoded.strip() == null || publicKeyEncoded.strip() == null)) {
+            throw new CustomException("Veuillez, soit renseigner les 2 clés soit charger le fichier .crt de clés SVP.");
+        }
+        // recuperation des clés du fichier
+        if (trustedKeys != null) {
+            KeysPairDTO extractedKeys;
+            extractedKeys = this.certificateReader(trustedKeys);
+            privateKeyEncoded = extractedKeys.getPrivateKey();
+            publicKeyEncoded = extractedKeys.getPublicKey();
+        }
+
         /**
          * pour le hash du contenu qui sera calculé et pour la signature numérique (le
          * hash qui sera signé/chiffré via la clé privée) du document
@@ -664,4 +680,33 @@ public class MainServiceImpl implements MainService {
     // documentAdminRepository.save(documentAdmin);
     // }
 
+    /**
+     * extrait les clés dans un tableau de chaines
+     * 
+     * @param file
+     * @return
+     */
+    private KeysPairDTO certificateReader(MultipartFile file) {
+        log.info("Extraction des clés du fichier : {}", file.getOriginalFilename());
+
+        KeysPairDTO keysPair = new KeysPairDTO();
+        try {
+            // Lire le fichier en String
+            String content = new String(file.getBytes(), StandardCharsets.UTF_8);
+
+            // Séparer les clés en fonction de l'espace
+            String[] keys = content.split(" ");
+
+            if (keys.length == 2) {
+                keysPair.setPrivateKey(keys[0].trim());
+                keysPair.setPublicKey(keys[1].trim());
+            } else {
+                throw new CustomException("Format incorrect du fichier. Impossible d'extraire les clés.");
+            }
+        } catch (IOException e) {
+            log.info("Erreur lors de la lecture du fichier : {}", e.getMessage());
+        }
+
+        return keysPair;
+    }
 }

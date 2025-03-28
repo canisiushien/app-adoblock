@@ -27,13 +27,15 @@ public interface MainService {
      * enregistre un document administratif dans la blockchain Ethereum
      * 
      * @param digitalDocument
+     * @param trustedKeys
      * @param privateKey
      * @param publicKey
      * @return
      * @throws InvalidKeyException
      * @throws Exception
      */
-    ResponseAddDTO addDocumentToBlockchain(MultipartFile digitalDocument, String privateKeyEncoded,
+    ResponseAddDTO addDocumentToBlockchain(MultipartFile digitalDocument, MultipartFile trustedKeys,
+            String privateKeyEncoded,
             String publicKeyEncoded)
             throws InvalidKeyException, Exception;
 
