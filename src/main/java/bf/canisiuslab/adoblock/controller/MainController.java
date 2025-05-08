@@ -50,7 +50,8 @@ public class MainController {
     }
 
     /**
-     * enregistre un document administratif sur la blockchain
+     * extrait et calcul le necessaire pour l'enregistrement d'un document
+     * administratif sur la blockchain
      * 
      * 
      * @param documentAdministratif
@@ -59,6 +60,47 @@ public class MainController {
      * @throws InvalidKeyException
      */
     @PostMapping(value = "/add-to-blockchain", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> prepareDocumentToSaveEthereum(
+            @RequestParam(name = "file", required = true) MultipartFile documentAdministratif,
+            @RequestParam(name = "fileKey", required = false) MultipartFile trustedKeys,
+            @RequestParam(name = "privateKey", required = false) String privateKey,
+            @RequestParam(name = "publicKey", required = false) String publicKey)
+            throws InvalidKeyException, Exception {
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(service.prepareDocToStore(documentAdministratif, trustedKeys, privateKey, publicKey));
+    }
+
+    /**
+     * extrait et calcul le necessaire pour la recherche d'un document administratif
+     * depuis la blockchain
+     * 
+     * @param file
+     * @return
+     * @throws Exception
+     * @throws InvalidKeyException
+     */
+    @PostMapping(value = "/verify-from-blockchain", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> prepareDocumentToGetEthereum(
+            @RequestParam(name = "file", required = true) MultipartFile file)
+            throws Exception {
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(service.prepareDocToGet(file));
+
+    }
+    // ================================ ci-dessous l'ancienne approche
+
+    /**
+     * enregistre un document administratif sur la blockchain
+     * 
+     * 
+     * @param documentAdministratif
+     * @return
+     * @throws Exception
+     * @throws InvalidKeyException
+     */
+    @PostMapping(value = "/add-to-blockchain-old", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> saveDocumentToEthereum(
             @RequestParam(name = "file", required = true) MultipartFile documentAdministratif,
             @RequestParam(name = "fileKey", required = false) MultipartFile trustedKeys,
@@ -78,7 +120,7 @@ public class MainController {
      * @throws IOException
      * @throws InvalidKeyException
      */
-    @PostMapping(value = "/verify-from-blockchain", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/verify-from-blockchain-old", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> authenticateDocumentFromEthereum(
             @RequestParam(name = "file", required = true) MultipartFile file)
             throws IOException, InvalidKeyException {

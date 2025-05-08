@@ -76,6 +76,107 @@ public class MainServiceImpl implements MainService {
         return keysPair;
     }
 
+    @Override
+    public DocumentETH prepareDocToStore(MultipartFile digitalDocument, MultipartFile trustedKeys,
+            String privateKeyEncoded, String publicKeyEncoded) throws InvalidKeyException, Exception {
+        log.info("Préparation du document {} pour stockage Ethereum", digitalDocument.getOriginalFilename());
+        // controle et validation de paramaetres
+        if (trustedKeys == null && (privateKeyEncoded.strip() == null || publicKeyEncoded.strip() == null)) {
+            throw new CustomException("Veuillez, soit renseigner les 2 clés soit charger le fichier .crt de clés SVP.");
+        }
+
+        // recuperation des clés du fichier
+        if (trustedKeys != null) {
+            KeysPairDTO extractedKeys;
+            extractedKeys = this.certificateReader(trustedKeys);
+            privateKeyEncoded = extractedKeys.getPrivateKey();
+            publicKeyEncoded = extractedKeys.getPublicKey();
+        }
+
+        /**
+         * pour le hash du contenu qui sera calculé et pour la signature numérique (le
+         * hash qui sera signé/chiffré via la clé privée) du document
+         */
+        byte[] hash;
+        byte[] signedHash;
+        /**
+         * contient le contenu du document qui sera extrait et la reponse d'execution de
+         * la transaction de stockage blockchain
+         */
+        String content;
+        DocumentETH response = new DocumentETH();
+        response.setFileName(digitalDocument.getOriginalFilename());
+        /** récuperation de l'extension du fichier */
+        String fileType = digitalDocument.getContentType();
+
+        // verification de l'extension du fichier
+        if (fileType.equals(HashUtil.PDF_TYPE)) {
+            content = this.extractTextFromPdf(digitalDocument);
+        } else if (fileType.equals(HashUtil.WORD_TYPE)) {
+            content = this.extractTextFromWord(digitalDocument);
+        } else {
+            throw new CustomException(
+                    "Le type du document n'est pas supporte. Veuillez reessayer avec un PDF ou Word SVP.");
+        }
+
+        // calcul de l'empreinte numerique du contenu du document
+        hash = HashUtil.calculateHashWithSHA256(content);
+        // chiffrement de l'empreinte numerique (la signature numérique)
+        signedHash = this.signHashWithPrivateKey(hash, privateKeyEncoded.strip());
+
+        // Conversion en Base64 pour stockage dans la blockchain Ethereum
+        String hashEncoded = Base64.getEncoder().encodeToString(hash);
+        String signedHashEncoded = Base64.getEncoder().encodeToString(signedHash);
+
+        // envoi des valeurs ci-dessous au Smart Contract pour stockage dans Ethereum
+        log.info("hash: {}", hash);
+        log.info("hashEncoded: {}", hashEncoded);
+        log.info("signedHashEncoded: {}", signedHashEncoded);
+        log.info("Public Key: {}", publicKeyEncoded.strip());
+
+        response.setHashEncoded(hashEncoded);
+        response.setSignedHashEncoded(signedHashEncoded);
+        response.setPublicKeyEncoded(publicKeyEncoded.strip());
+
+        return response;
+    }
+
+    @Override
+    public DocumentETH prepareDocToGet(MultipartFile digitalDocument) throws Exception {
+        log.info("Préparation du document {} pour recherche Ethereum", digitalDocument.getOriginalFilename());
+
+        // pour le hash du contenu qui sera calculé
+        byte[] hash;
+
+        /**
+         * contient le contenu du document qui sera extrait et la reponse d'execution de
+         * la transaction de stockage blockchain
+         */
+        String content;
+        DocumentETH response = new DocumentETH();
+        response.setFileName(digitalDocument.getOriginalFilename());
+        /** récuperation de l'extension du fichier */
+        String fileType = digitalDocument.getContentType();
+
+        // verification de l'extension du fichier
+        if (fileType.equals(HashUtil.PDF_TYPE)) {
+            content = this.extractTextFromPdf(digitalDocument);
+        } else if (fileType.equals(HashUtil.WORD_TYPE)) {
+            content = this.extractTextFromWord(digitalDocument);
+        } else {
+            throw new CustomException(
+                    "Le type du document n'est pas supporte. Veuillez reessayer avec un PDF ou Word SVP.");
+        }
+
+        // calcul de l'empreinte numerique du contenu du document
+        hash = HashUtil.calculateHashWithSHA256(content);
+        // Conversion en Base64 pour stockage dans la blockchain Ethereum
+        String hashEncoded = Base64.getEncoder().encodeToString(hash);
+        response.setHashEncoded(hashEncoded);
+
+        return response;
+    }
+
     /**
      * enregistre un document administratif dans la blockchain
      *

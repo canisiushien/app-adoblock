@@ -52,7 +52,7 @@ contract DocumentAdministratif {
     function getAdministrativeDocument(string memory _hashEncoded) public view returns (string memory, string memory, string memory, uint256){
          console.log("Recherche de _hashEncoded = ", _hashEncoded);
         //on leve une exception si un hash similaire n'avait pas ete stocké dans la blockchain
-        require(bytes(documents[_hashEncoded].hashEncoded).length != 0, "Ce document inexistant dans la blockchain.");
+        require(bytes(documents[_hashEncoded].hashEncoded).length != 0, "Ce document n'existe pas dans la blockchain.");
 
         Document memory doc = documents[_hashEncoded];
         return (doc.hashEncoded, doc.signedHashEncoded, doc.publicKeyEncoded, doc.timestamp);

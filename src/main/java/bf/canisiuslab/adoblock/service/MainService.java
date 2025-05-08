@@ -1,5 +1,6 @@
 package bf.canisiuslab.adoblock.service;
 
+import bf.canisiuslab.adoblock.service.dto.DocumentETH;
 import bf.canisiuslab.adoblock.service.dto.KeysPairDTO;
 import bf.canisiuslab.adoblock.service.dto.ResponseAddDTO;
 import bf.canisiuslab.adoblock.service.dto.ResponseVerifDTO;
@@ -22,6 +23,32 @@ public interface MainService {
      * @return
      */
     KeysPairDTO generateKeysPair() throws NoSuchAlgorithmException;
+
+    /**
+     * recoit le fichier, extait le contenu, hash le contenu, chiffre le hash pour
+     * retourner hash, hashChiffré, publicKey.
+     * 
+     * @param digitalDocument
+     * @param trustedKeys
+     * @param privateKeyEncoded
+     * @param publicKeyEncoded
+     * @return
+     * @throws InvalidKeyException
+     * @throws Exception
+     */
+    DocumentETH prepareDocToStore(MultipartFile digitalDocument, MultipartFile trustedKeys,
+            String privateKeyEncoded,
+            String publicKeyEncoded)
+            throws InvalidKeyException, Exception;
+
+    /**
+     * recoit le fichier, extait le contenu, et hash le contenu pour le retourner
+     * 
+     * @param digitalDocument
+     * @return
+     * @throws Exception
+     */
+    DocumentETH prepareDocToGet(MultipartFile digitalDocument) throws Exception;
 
     /**
      * enregistre un document administratif dans la blockchain Ethereum

@@ -7,7 +7,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 /**
- * DTO pour les donnees provenant de la blockchain Ethereum
+ * DTO pour les donnees provenant/envoyées de la blockchain Ethereum
  *
  * @author Canisius <canisiushien@gmail.com>
  */
@@ -18,13 +18,16 @@ import lombok.ToString;
 @NoArgsConstructor
 public class DocumentETH {
 
-    /** empreinte numerique encode en base64 */
+    /** nom du fichier */
+    private String fileName;
+
+    /** empreinte numerique encode en base64. A transmettre pour saving */
     private String hashEncoded;
 
-    /** signature numerique encode en base64 */
+    /** signature numerique encode en base64. A transmettre pour saving */
     private String signedHashEncoded;
 
-    /** cle publique encode en base64 */
+    /** cle publique encode en base64. A transmettre pour saving */
     private String publicKeyEncoded;
 
     /** horodatage de stockage genere automatiquement par Ethereum */
