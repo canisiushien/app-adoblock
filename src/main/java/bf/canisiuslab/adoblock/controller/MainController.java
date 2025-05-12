@@ -59,7 +59,7 @@ public class MainController {
      * @throws Exception
      * @throws InvalidKeyException
      */
-    @PostMapping(value = "/add-to-blockchain", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/prepare-store-to-blockchain", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> prepareDocumentToSaveEthereum(
             @RequestParam(name = "file", required = true) MultipartFile documentAdministratif,
             @RequestParam(name = "fileKey", required = false) MultipartFile trustedKeys,
@@ -80,7 +80,7 @@ public class MainController {
      * @throws Exception
      * @throws InvalidKeyException
      */
-    @PostMapping(value = "/verify-from-blockchain", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/prepare-get-from-blockchain", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> prepareDocumentToGetEthereum(
             @RequestParam(name = "file", required = true) MultipartFile file)
             throws Exception {
@@ -100,7 +100,7 @@ public class MainController {
      * @throws Exception
      * @throws InvalidKeyException
      */
-    @PostMapping(value = "/add-to-blockchain-old", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/add-to-blockchain", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> saveDocumentToEthereum(
             @RequestParam(name = "file", required = true) MultipartFile documentAdministratif,
             @RequestParam(name = "fileKey", required = false) MultipartFile trustedKeys,
@@ -120,7 +120,7 @@ public class MainController {
      * @throws IOException
      * @throws InvalidKeyException
      */
-    @PostMapping(value = "/verify-from-blockchain-old", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/verify-from-blockchain", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> authenticateDocumentFromEthereum(
             @RequestParam(name = "file", required = true) MultipartFile file)
             throws IOException, InvalidKeyException {
