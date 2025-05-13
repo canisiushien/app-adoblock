@@ -32,12 +32,6 @@ public class ResponseVerifDTO {
     /** nom du fichier soumis a authentification (Document numetique) */
     private String fileName;
 
-    /**
-     * l'empreinte numerique du doc. Ce hash est encode en base64 (Empreinte
-     * numerique du document)
-     */
-    private String docHashed;
-
     /** date de demande d'authentification (Date de demande) */
     private Instant requestDate;
 
@@ -48,5 +42,14 @@ public class ResponseVerifDTO {
     private String ellipticCurve;
 
     /** cle publique associee */
-    private String publicKey;
+    private String publicKeyStored;
+
+    /** hash calculé et soumis à eth pour la recherche dans eth */
+    private String newHashEncoded;
+
+    /** hash encodé en base64 et stocké sur eth auparavant */
+    private String hashEncodedStored;
+
+    /** hash signé encodé en base64 et stocké sur eth auparavant */
+    private String signedHashEncodedStored;
 }

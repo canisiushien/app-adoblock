@@ -1,14 +1,16 @@
 package bf.canisiuslab.adoblock.controller;
 
-import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
 import bf.canisiuslab.adoblock.service.dto.KeysPairDTO;
+import bf.canisiuslab.adoblock.service.dto.ResponseVerifDTO;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -67,7 +69,7 @@ public class MainController {
             @RequestParam(name = "publicKey", required = false) String publicKey)
             throws InvalidKeyException, Exception {
 
-        return ResponseEntity.status(HttpStatus.CREATED)
+        return ResponseEntity.status(HttpStatus.OK)
                 .body(service.prepareDocToStore(documentAdministratif, trustedKeys, privateKey, publicKey));
     }
 
@@ -89,44 +91,18 @@ public class MainController {
                 .body(service.prepareDocToGet(file));
 
     }
-    // ================================ ci-dessous l'ancienne approche
 
     /**
-     * enregistre un document administratif sur la blockchain
+     * effectue les 2 vérifications pour confirmer/infirmer l'authenticité du doc
      * 
      * 
-     * @param documentAdministratif
+     * @param digitalDoc
      * @return
-     * @throws Exception
-     * @throws InvalidKeyException
      */
-    @PostMapping(value = "/add-to-blockchain", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> saveDocumentToEthereum(
-            @RequestParam(name = "file", required = true) MultipartFile documentAdministratif,
-            @RequestParam(name = "fileKey", required = false) MultipartFile trustedKeys,
-            @RequestParam(name = "privateKey", required = false) String privateKey,
-            @RequestParam(name = "publicKey", required = false) String publicKey)
-            throws InvalidKeyException, Exception {
-
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(service.addDocumentToBlockchain(documentAdministratif, trustedKeys, privateKey, publicKey));
-    }
-
-    /**
-     * vérifie l'authenticité d'un document administratif depuis la blockchain
-     * 
-     * @param file
-     * @return
-     * @throws IOException
-     * @throws InvalidKeyException
-     */
-    @PostMapping(value = "/verify-from-blockchain", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> authenticateDocumentFromEthereum(
-            @RequestParam(name = "file", required = true) MultipartFile file)
-            throws IOException, InvalidKeyException {
+    @PostMapping(value = "/verify-from-blockchain")
+    public ResponseEntity<?> verifyDocumentFromBlockchain(@RequestBody ResponseVerifDTO digitalDoc) {
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body(service.verifyDocumentFromBlockchain(file));
-
+                .body(service.verifyDocumentFromBlockchain(digitalDoc));
     }
 }
