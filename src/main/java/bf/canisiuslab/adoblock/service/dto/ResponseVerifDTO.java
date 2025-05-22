@@ -1,7 +1,5 @@
 package bf.canisiuslab.adoblock.service.dto;
 
-import java.time.Instant;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
