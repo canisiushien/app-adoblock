@@ -1,7 +1,7 @@
 ## YAML Template.
 ---
 server:
-  port: 8080
+  port: 8081
 
 ---
 spring:
@@ -17,6 +17,9 @@ spring:
       ddl-auto: update
       jdbc.lob.non_contextual_creation: true
       default_schema: public
+  sql:
+    init:
+      platform: postgres
   datasource:
     #gestion de pool de connexion : driver-class-name et hikari
     driver-class-name: org.postgresql.Driver
@@ -46,9 +49,6 @@ spring:
       #file-size-threshold: 2KB
       max-file-size: 3500KB
       max-request-size: 35000KB
-  sql:
-    init:
-      platform: postgres
 ---
 #CONFIG BLOCKCHAIN ETHEREUM
 # api-key : URL de l'API INFURA (si on deploie sur le réseau public Sepolia). infura est un fournisseur de noeuds. Il permet au dApp de communiquer avec ethereum.

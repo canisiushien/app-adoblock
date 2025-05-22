@@ -199,14 +199,13 @@ public class MainServiceImpl implements MainService {
      */
     @Override
     public ResponseVerifDTO verifyDocumentFromBlockchain(ResponseVerifDTO digitalDoc) {
-        log.info("Vérification de l'authenticité du document digital : {}", digitalDoc.getFileName());
+        log.info("Vérification de l'authenticité du document digital : {}", digitalDoc);
         /** construction de l'objet pour la reponse */
         ResponseVerifDTO response = new ResponseVerifDTO();
         response.setTypeKey(HashUtil.TYPE_KEY);
         response.setEllipticCurve(HashUtil.ELLIPTIC_CURVE);
         response.setFileName(digitalDoc.getFileName());
         response.setIntegrated(true);
-        response.setRequestDate(new Date().toInstant());
         response.setNewHashEncoded(digitalDoc.getNewHashEncoded().strip());
         response.setHashEncodedStored(digitalDoc.getHashEncodedStored().strip());
         response.setSignedHashEncodedStored(digitalDoc.getSignedHashEncodedStored().strip());

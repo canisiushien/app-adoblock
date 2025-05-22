@@ -33,7 +33,7 @@ public class ResponseVerifDTO {
     private String fileName;
 
     /** date de demande d'authentification (Date de demande) */
-    private Instant requestDate;
+    private String requestDate;
 
     /** type d'algo cryptographique */
     private String typeKey;
