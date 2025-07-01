@@ -25,7 +25,7 @@ public class ResponseVerifDTO {
     private Boolean integrated;
 
     /** date a laquelle le document a ete ajoute a la blockchain (horodatage) */
-    private Long horodatage;
+    private String horodatage;
 
     /** nom du fichier soumis a authentification (Document numetique) */
     private String fileName;

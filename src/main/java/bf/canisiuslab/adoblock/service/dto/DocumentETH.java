@@ -31,5 +31,5 @@ public class DocumentETH {
     private String publicKeyEncoded;
 
     /** horodatage de stockage genere automatiquement par Ethereum */
-    private long timestamp;
+    private String timestamp;
 }
