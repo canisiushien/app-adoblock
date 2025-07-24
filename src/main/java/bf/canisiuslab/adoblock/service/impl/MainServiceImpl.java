@@ -292,9 +292,14 @@ public class MainServiceImpl implements MainService {
     private byte[] signHashWithPrivateKey(byte[] hash, String privateKeyEncoded) throws InvalidKeyException, Exception {
         log.info("Chiffrement (via privateKey) du hash calcule [signature numerique du doc].");
         Signature signature = Signature.getInstance(HashUtil.SIGNATURE_ALGORITHM);
-        /** convertir String privateKeyEncoded en objet PrivateKey */
-        signature.initSign(HashUtil.decodePrivateKey(privateKeyEncoded));
-        signature.update(hash);
+
+        try{
+            /** convertir String privateKeyEncoded en objet PrivateKey */
+            signature.initSign(HashUtil.decodePrivateKey(privateKeyEncoded));
+            signature.update(hash);
+        } catch (Exception e) {
+            throw new CustomException("Clés asymétriques invalides. Car " + e.getMessage());
+        }
 
         return signature.sign();
     }
