@@ -11,10 +11,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import java.security.*;
 import java.util.Base64;
-import java.util.Date;
 import java.security.spec.ECGenParameterSpec;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Random;
+import java.util.UUID;
+
 import bf.canisiuslab.adoblock.service.MainService;
 import bf.canisiuslab.adoblock.service.dto.DocumentETH;
 import bf.canisiuslab.adoblock.service.dto.KeysPairDTO;
@@ -62,6 +64,48 @@ public class MainServiceImpl implements MainService {
         }
 
         return keysPair;
+    }
+
+    /**
+     * extrait et calcul le necessaire pour la revocation de cles asymetriques sur la blockchain
+     *
+     * @param trustedKeys
+     * @param privateKeyEncoded
+     * @param publicKeyEncoded
+     * @return
+     * @throws Exception
+     * @throws InvalidKeyException
+     */
+    @Override
+    public DocumentETH prepareRevokeKeyToEthereum(MultipartFile trustedKeys, String privateKeyEncoded, String publicKeyEncoded) throws InvalidKeyException, Exception {
+        log.info("Revocation de paire de cles ECDSA");
+        // controle et validation de paramaetres
+        if (trustedKeys == null && (privateKeyEncoded.strip() == null || publicKeyEncoded.strip() == null)) {
+            throw new CustomException("Veuillez, soit renseigner les 2 clés soit charger le fichier .crt de clés SVP.");
+        }
+
+        // recuperation des clés du fichier
+        if (trustedKeys != null) {
+            KeysPairDTO extractedKeys;
+            extractedKeys = this.certificateReader(trustedKeys);
+            privateKeyEncoded = extractedKeys.getPrivateKey();
+            publicKeyEncoded = extractedKeys.getPublicKey();
+        }
+        //verifier que les 2 clés correspondent bien. Le matching direct entre privkey et pubkey n'est pas.
+        //donc signer une chaine aleatoire avec le privkey, puis verifier cette signature via pubkey
+        byte[] randomChain = new SecureRandom().toString().getBytes();
+        byte[] signedRandomChain = this.signHashWithPrivateKey(randomChain, privateKeyEncoded.strip());
+        boolean isValid =  this.verifySignatureWithPublicKey(Base64.getEncoder().encodeToString(randomChain),
+                Base64.getEncoder().encodeToString(signedRandomChain), publicKeyEncoded);
+
+        if (!isValid)
+            throw new CustomException("Les clés fournies sont invalides");
+
+        //retourner la publicKeyEncoded si elle est associée à la privateKeyEncoded
+        System.out.println("publicKeyEncoded ===== : "+publicKeyEncoded);
+        DocumentETH response = new DocumentETH();
+        response.setPublicKeyEncoded(publicKeyEncoded);
+        return response;
     }
 
     /**
@@ -151,7 +195,6 @@ public class MainServiceImpl implements MainService {
      * -calculer le hash (empreinte numerique)
      * 
      * @param digitalDocument  fichier numerique du document administratif
-     * @param publicKeyEncoded encodé en Base64
      * @return une message sur l'exécution de l'opération
      * @throws Exception en cas d'erreur d'exécution
      */

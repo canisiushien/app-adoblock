@@ -52,6 +52,25 @@ public class MainController {
     }
 
     /**
+     * extrait et calcul le necessaire pour la revocation de cles asymetriques sur la blockchain
+     *
+     *
+     * @return
+     * @throws Exception
+     * @throws InvalidKeyException
+     */
+    @PostMapping(value = "/prepare-revoke-to-blockchain", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> prepareRevokeKeyToEthereum(
+            @RequestParam(name = "fileKey", required = false) MultipartFile trustedKeys,
+            @RequestParam(name = "privateKey", required = false) String privateKey,
+            @RequestParam(name = "publicKey", required = false) String publicKey)
+            throws InvalidKeyException, Exception {
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(service.prepareRevokeKeyToEthereum(trustedKeys, privateKey, publicKey));
+    }
+
+    /**
      * extrait et calcul le necessaire pour l'enregistrement d'un document
      * administratif sur la blockchain
      * 

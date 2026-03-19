@@ -18,6 +18,9 @@ import lombok.ToString;
 @NoArgsConstructor
 public class ResponseVerifDTO {
 
+    /** le statut de la cle de signature valid/revoked ? */
+    private Boolean keyStatus;
+
     /** le doc est-il valide/authentique ? */
     private Boolean authenticated;
 

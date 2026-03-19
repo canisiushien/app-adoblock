@@ -24,6 +24,18 @@ public interface MainService {
         KeysPairDTO generateKeysPair() throws NoSuchAlgorithmException;
 
         /**
+         * extrait et calcul le necessaire pour la revocation de cles asymetriques sur la blockchain
+         *
+         *
+         * @return
+         * @throws Exception
+         * @throws InvalidKeyException
+         */
+        DocumentETH prepareRevokeKeyToEthereum(MultipartFile trustedKeys,
+                                   String privateKeyEncoded,
+                                   String publicKeyEncoded)
+                throws InvalidKeyException, Exception;
+        /**
          * recoit le fichier, extait le contenu, hash le contenu, chiffre le hash pour
          * retourner hash, hashChiffré, publicKey.
          * 
