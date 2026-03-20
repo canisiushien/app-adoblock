@@ -158,16 +158,18 @@ public class MainServiceImpl implements MainService {
 
         // verification de l'extension du fichier
         if (fileType.equals(HashUtil.PDF_TYPE)) {
-            content = this.extractTextFromPdf(digitalDocument);
+            //content = this.extractTextFromPdf(digitalDocument); //========ancienneVersion
+            hash = HashUtil.calculateHashWithSHA256(digitalDocument.getInputStream());
         } else if (fileType.equals(HashUtil.WORD_TYPE)) {
-            content = this.extractTextFromWord(digitalDocument);
+            //content = this.extractTextFromWord(digitalDocument); //========ancienneVersion
+            hash = HashUtil.calculateHashWithSHA256(digitalDocument.getInputStream());
         } else {
             throw new CustomException(
                     "Le type du document n'est pas supporté. Veuillez réessayer avec un PDF ou Word SVP.");
         }
 
         // calcul de l'empreinte numerique du contenu du document
-        hash = HashUtil.calculateHashWithSHA256(content);
+        //hash = HashUtil.calculateHashWithSHA256(content); //========ancienneVersion
         // chiffrement de l'empreinte numerique (la signature numérique)
         signedHash = this.signHashWithPrivateKey(hash, privateKeyEncoded.strip());
 
@@ -217,16 +219,18 @@ public class MainServiceImpl implements MainService {
 
         // verification de l'extension du fichier
         if (fileType.equals(HashUtil.PDF_TYPE)) {
-            content = this.extractTextFromPdf(digitalDocument);
+            //content = this.extractTextFromPdf(digitalDocument); //========ancienneVersion
+            hash = HashUtil.calculateHashWithSHA256(digitalDocument.getInputStream());
         } else if (fileType.equals(HashUtil.WORD_TYPE)) {
-            content = this.extractTextFromWord(digitalDocument);
+            //content = this.extractTextFromWord(digitalDocument); //========ancienneVersion
+            hash = HashUtil.calculateHashWithSHA256(digitalDocument.getInputStream());
         } else {
             throw new CustomException(
                     "Le type du document n'est pas supporte. Veuillez réessayer avec un PDF ou Word SVP.");
         }
 
         // calcul de l'empreinte numerique du contenu du document
-        hash = HashUtil.calculateHashWithSHA256(content);
+        //hash = HashUtil.calculateHashWithSHA256(content); //========ancienneVersion
         // Conversion en Base64 pour stockage dans la blockchain Ethereum
         String hashEncoded = Base64.getEncoder().encodeToString(hash);
         response.setHashEncoded(hashEncoded);

@@ -2,6 +2,7 @@ package bf.canisiuslab.adoblock.utils;
 
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.InputStream;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.security.*;
@@ -57,6 +58,20 @@ public class HashUtil {
         } catch (NoSuchAlgorithmException e) {
             throw new CustomException("Algorithm SHA-256 introuvable : " + e);
         }
+    }
+
+    public static byte[] calculateHashWithSHA256(InputStream inputStream) throws Exception {
+        MessageDigest digest = MessageDigest.getInstance(HASH_ALGORITHM);
+
+        //[4096]=4 KB ; [16384]=16 KB ; [65536]=64 KB
+        byte[] buffer = new byte[8192]; //pour de facon standard le fichier par petits morceaux de 8 KB
+        int bytesRead;
+
+        while ((bytesRead = inputStream.read(buffer)) != -1) {
+            digest.update(buffer, 0, bytesRead);
+        }
+
+        return digest.digest();
     }
 
     /** Convertir en byte[] en String hexadecimal */
